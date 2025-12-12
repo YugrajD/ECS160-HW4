@@ -35,7 +35,22 @@ public class App
         try {
             String encodingUrl = URLEncoder.encode(input, "UTF-8");
 
-            String url = "http://localhost:8080/" + endpoint + "?" + encodingUrl;
+            String param;
+            switch (endpoint) {
+                case "summarize_issue":
+                    param = "issueJson";
+                    break;
+                case "find_bugs":
+                    param = "code";
+                    break;
+                case "check_equivalence":
+                    param = "issueJsonArray";
+                    break;
+                default:
+                    param = "input";
+            }   
+
+            String url = "http://localhost:30000/" + endpoint + "?" + param + "=" + encodingUrl;
             
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).GET().build();
