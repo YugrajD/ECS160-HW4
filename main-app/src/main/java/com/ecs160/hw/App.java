@@ -36,20 +36,16 @@ public class App
             String encodingUrl = URLEncoder.encode(input, "UTF-8");
 
             String param;
-            switch (endpoint) {
-                case "summarize_issue":
-                    param = "issueJson";
-                    break;
-                case "find_bugs":
-                    param = "code";
-                    break;
-                case "check_equivalence":
-                    param = "issueJsonArray";
-                    break;
-                default:
-                    param = "input";
-            }   
 
+            if (endpoint.equals("summarize_issue")) {
+                param = "issueJson";
+            } else if (endpoint.equals("find_bugs")) {
+                param = "code";
+            } else if (endpoint.equals("check_equivalence")) {
+                param = "issueJsonArray";
+            } else {
+                param = "input";
+            }
             String url = "http://localhost:30000/" + endpoint + "?" + param + "=" + encodingUrl;
             
             HttpClient client = HttpClient.newHttpClient();
@@ -106,6 +102,9 @@ public class App
             // calling microservice B
             List<String> bugFinder = new ArrayList<>();
             for (String cFile : cFiles) {
+                if (cFile.trim().isEmpty()) {
+                    continue;
+                }
                 String fileContent = GitService.readFile(repo.name, cFile);
                 String sendContent = getRequestSender("find_bugs", fileContent);
                 bugFinder.add(sendContent);
